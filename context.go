@@ -2,11 +2,11 @@ package main
 
 import (
 	"dotabot-ui/handler"
-	"dotabot-ui/telegram"
 
 	"os"
 
 	"github.com/saladinkzn/dotabot-cron/repository"
+	"github.com/saladinkzn/dotabot-cron/telegram"
 )
 
 type Context struct {

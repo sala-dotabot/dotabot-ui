@@ -3,7 +3,6 @@ WORKDIR /go/src/dotabot-ui
 
 COPY telegram telegram
 COPY handler handler
-COPY repository repository
 COPY vendor vendor
 COPY *.go ./
 
