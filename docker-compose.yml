@@ -1,0 +1,10 @@
+version: "3"
+services:
+  docker-ui:
+    build: .
+    environment:
+      - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
+      - TELEGRAM_PROXY_URL=${TELEGRAM_PROXY_URL}
+      - GODEBUG=http2client=0
+    ports:
+      - 8080:8080
