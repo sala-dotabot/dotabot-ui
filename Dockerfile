@@ -18,5 +18,6 @@ RUN apk --update --no-cache add ca-certificates
 COPY --from=build /go/src/dotabot-ui/dotabot-ui .
 
 COPY docker-entrypoint.sh .
+RUN chmod +x docker-entrypoint.sh
 
 CMD ["./docker-entrypoint.sh"]
