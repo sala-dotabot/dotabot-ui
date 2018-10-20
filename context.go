@@ -5,6 +5,7 @@ import (
 
 	"os"
 
+	"github.com/go-redis/redis"
 	"github.com/saladinkzn/dotabot-cron/repository"
 	"github.com/saladinkzn/dotabot-cron/telegram"
 )
@@ -23,7 +24,13 @@ func InitContext () (context *Context, err error) {
 		return
 	}
 
-	repository := repository.CreateMapRepository()
+	client := redis.NewClient(&redis.Options{
+		Addr:     getRedisAddr(),
+		Password: "",
+		DB:       0,
+	})
+
+	repository := repository.CreateRedisRepository(client)
 
 	handler := handler.CreateHandler(repository, telegramApi)
 
@@ -50,4 +57,8 @@ func getTelegramApiToken() string {
 
 func getTelegramProxyUrl() string {
 	return os.Getenv("TELEGRAM_PROXY_URL")
+}
+
+func getRedisAddr() string {
+	return os.Getenv("REDIS_ADDR")
 }
