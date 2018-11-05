@@ -25,8 +25,8 @@ func CreateHandler(repository repository.SubscriptionRepository, telegramApi tel
 	return &Handler{
 		repository: repository,
 		telegramApi: telegramApi,
-		subscribeRe: regexp.MustCompile("^subscribe (\\d+)"),
-		unsubscribeRe: regexp.MustCompile("^unsubscribe (\\d+)"),
+		subscribeRe: regexp.MustCompile("^/?subscribe (\\d+)"),
+		unsubscribeRe: regexp.MustCompile("^/?unsubscribe (\\d+)"),
 	}
 }
 
@@ -45,12 +45,17 @@ func (this Handler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("%#v", u.Message)
 
-	if (u.Message.Text == "subscriptions") {
-		err = this.handleSubscriptions(u.Message.Chat.Id)
-	} else if (this.subscribeRe.MatchString(u.Message.Text)) {
-		err = this.handleSubscribe(u.Message.Chat.Id, u.Message.Text)
-	} else if (this.unsubscribeRe.MatchString(u.Message.Text)) {
-		err = this.handleUnscubscribe(u.Message.Chat.Id, u.Message.Text)
+	text := u.Message.Text
+	chatId := u.Message.Chat.Id
+
+	log.Printf("Text: %s", text)
+
+	if (text == "subscriptions" || text == "/subscriptions") {
+		err = this.handleSubscriptions(chatId)
+	} else if (this.subscribeRe.MatchString(text)) {
+		err = this.handleSubscribe(chatId, text)
+	} else if (this.unsubscribeRe.MatchString(text)) {
+		err = this.handleUnscubscribe(chatId, text)
 	} else {
 		log.Printf("Handler was not found")
 	}
