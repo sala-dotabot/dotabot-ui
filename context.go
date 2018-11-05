@@ -32,7 +32,17 @@ func InitContext () (context *Context, err error) {
 
 	repository := repository.CreateRedisRepository(client)
 
-	handler := handler.CreateHandler(repository, telegramApi)
+	listSubscriptions := handler.CreateListSubscriptions(repository, telegramApi)
+	subscribe := handler.CreateSubscribe(repository)
+	unsubscribe := handler.CreateUnsubscribe(repository)
+
+	commands := []handler.Command {
+		listSubscriptions,
+		subscribe,
+		unsubscribe,
+	}
+
+	handler := handler.CreateHandler(commands)
 
 	context = &Context {
 		Handler: handler,

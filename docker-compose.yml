@@ -3,8 +3,22 @@ services:
   docker-ui:
     build: .
     environment:
+      - REDIS_ADDR=redis:6379
       - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
       - TELEGRAM_PROXY_URL=${TELEGRAM_PROXY_URL}
       - GODEBUG=http2client=0
+    networks:
+      - dotabot-ui
     ports:
       - 8080:8080
+  redis:
+    image: redis:3.2.5
+    command: redis-server --appendonly yes
+    networks:
+      - dotabot-ui
+    volumes:
+      - redis:/data
+volumes:
+  redis:
+networks:
+  dotabot-ui:
