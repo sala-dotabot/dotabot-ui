@@ -4,6 +4,7 @@ WORKDIR /go/src/dotabot-ui
 COPY telegram telegram
 COPY handler handler
 COPY vendor vendor
+COPY state state
 COPY *.go ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a --installsuffix cgo -o dotabot-ui .

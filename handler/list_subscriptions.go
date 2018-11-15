@@ -22,12 +22,16 @@ func CreateListSubscriptions(repository repository.SubscriptionRepository,
 	}
 }
 
-func (this *ListSubscriptions) CanHandle(update local_telegram.Update) bool {
+func (this *ListSubscriptions) CanHandle(update local_telegram.Update, state string) bool {
+	if (state != INIT_STATE) {
+		return false
+	}
+
 	text := update.Message.Text
 	return text == "subscriptions" || text == "/subscriptions"
 }
 
-func (this *ListSubscriptions) Handle(update local_telegram.Update) error {
+func (this *ListSubscriptions) Handle(update local_telegram.Update, state string) error {
 	chat_id := update.Message.Chat.Id
 	log.Printf("Handle subscriptions %d", chat_id)
 	repositories, err := this.repository.FindAll()

@@ -5,7 +5,7 @@ import (
 )
 
 type Command interface {
-	CanHandle(update local_telegram.Update) bool
+	CanHandle(update local_telegram.Update, state string) bool
 
-	Handle(update local_telegram.Update) error
+	Handle(update local_telegram.Update, state string) error
 }

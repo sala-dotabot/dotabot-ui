@@ -2,6 +2,7 @@ package main
 
 import (
 	"dotabot-ui/handler"
+	"dotabot-ui/state"
 
 	"os"
 
@@ -31,10 +32,11 @@ func InitContext () (context *Context, err error) {
 	})
 
 	repository := repository.CreateRedisRepository(client)
+	stateRepository := state.CreateMapRepository()
 
 	listSubscriptions := handler.CreateListSubscriptions(repository, telegramApi)
-	subscribe := handler.CreateSubscribe(repository)
-	unsubscribe := handler.CreateUnsubscribe(repository)
+	subscribe := handler.CreateSubscribe(repository, telegramApi, stateRepository)
+	unsubscribe := handler.CreateUnsubscribe(repository, telegramApi, stateRepository)
 
 	commands := []handler.Command {
 		listSubscriptions,
@@ -42,7 +44,7 @@ func InitContext () (context *Context, err error) {
 		unsubscribe,
 	}
 
-	handler := handler.CreateHandler(commands)
+	handler := handler.CreateHandler(commands, stateRepository)
 
 	context = &Context {
 		Handler: handler,
