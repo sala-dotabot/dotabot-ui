@@ -16,6 +16,15 @@ func (this MapRespository) FindAll() ([]TelegramMatchSubscription, error) {
 	return keys, nil
 }
 
+func (this MapRespository) FindByChatId(chatId int64) (subscriptions []TelegramMatchSubscription, err error) {
+	for k := range this.holder {
+		if k.ChatId == chatId {
+			subscriptions = append(subscriptions, k)
+		}
+	}
+	return
+}
+
 func (this MapRespository) GetLastKnownMatchId(subscription TelegramMatchSubscription) (int64, error) {
 	matchId, ok := this.holder[subscription]
 	if ok {

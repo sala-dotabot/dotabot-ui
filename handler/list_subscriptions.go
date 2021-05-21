@@ -38,7 +38,7 @@ func (this *ListSubscriptions) CanHandle(update local_telegram.Update, state str
 func (this *ListSubscriptions) Handle(update local_telegram.Update, state string) error {
 	chat_id := update.Message.Chat.Id
 	log.Printf("Handle subscriptions %d", chat_id)
-	repositories, err := this.repository.FindAll()
+	repositories, err := this.repository.FindByChatId(chat_id)
 
 	if err != nil {
 		return err
