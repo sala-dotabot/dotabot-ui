@@ -28,7 +28,7 @@ func CreateUnsubscribe(repository repository.SubscriptionRepository,
 						stateRepository state.StateRepository) *Unsubscribe {
 	return &Unsubscribe{
 		accountIdRe: regexp.MustCompile("\\d+"),
-		unsubscribeRe: regexp.MustCompile("^/?unsubscribe"),
+		unsubscribeRe: regexp.MustCompile("^/?unsubscribe(@.*)?"),
 		repository: repository,
 		stateRepository: stateRepository,
 		telegramApi: telegramApi,

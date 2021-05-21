@@ -2,6 +2,7 @@ package handler
 
 import (
 	"log"
+	"regexp"
 
 	local_telegram "dotabot-ui/telegram"
 
@@ -10,6 +11,8 @@ import (
 )
 
 type ListSubscriptions struct {
+	subscriptionsRe *regexp.Regexp
+
 	repository repository.SubscriptionRepository
 	telegramApi telegram.TelegramApi
 }
@@ -17,6 +20,7 @@ type ListSubscriptions struct {
 func CreateListSubscriptions(repository repository.SubscriptionRepository, 
 								telegramApi telegram.TelegramApi) *ListSubscriptions {
 	return &ListSubscriptions {
+		subscriptionsRe: regexp.MustCompile("^/?subscriptions(@.*)?"),
 		repository: repository,
 		telegramApi: telegramApi,
 	}
@@ -28,7 +32,7 @@ func (this *ListSubscriptions) CanHandle(update local_telegram.Update, state str
 	}
 
 	text := update.Message.Text
-	return text == "subscriptions" || text == "/subscriptions"
+	return this.subscriptionsRe.MatchString(text)
 }
 
 func (this *ListSubscriptions) Handle(update local_telegram.Update, state string) error {

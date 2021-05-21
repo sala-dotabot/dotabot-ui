@@ -29,7 +29,7 @@ func CreateSubscribe(repository repository.SubscriptionRepository,
 						telegramApi telegram.TelegramApi,
 						stateRepository state.StateRepository) *Subscribe {
 	return &Subscribe{
-		subscribeRe: regexp.MustCompile("^/?subscribe"),
+		subscribeRe: regexp.MustCompile("^/?subscribe(@.*)?"),
 		accountIdRe: regexp.MustCompile("\\d+"),
 		repository: repository,
 		telegramApi: telegramApi,

@@ -37,7 +37,13 @@ func (this Handler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("%#v", u)
 	log.Printf("%#v", u.Message)
+
+	if u.Message == nil {
+		fmt.Fprint(w, "OK")
+		return
+	}
 
 	log.Printf("Loading state")
 	state, err := this.stateRepository.LoadState(u.Message.Chat.Id)
