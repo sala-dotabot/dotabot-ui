@@ -1,8 +1,8 @@
 package main
 
 import (
-	"dotabot-ui/handler"
-	"dotabot-ui/state"
+	"github.com/saladinkzn/dotabot-ui/handler"
+	"github.com/saladinkzn/dotabot-ui/state"
 
 	"os"
 
@@ -15,7 +15,7 @@ type Context struct {
 	Handler *handler.Handler
 }
 
-func InitContext () (context *Context, err error) {
+func InitContext() (context *Context, err error) {
 	telegramApiBaseUrl := getTelegramApiBaseUrl()
 	telegramApiToken := getTelegramApiToken()
 	telegramProxyUrl := getTelegramProxyUrl()
@@ -38,7 +38,7 @@ func InitContext () (context *Context, err error) {
 	subscribe := handler.CreateSubscribe(repository, telegramApi, stateRepository)
 	unsubscribe := handler.CreateUnsubscribe(repository, telegramApi, stateRepository)
 
-	commands := []handler.Command {
+	commands := []handler.Command{
 		listSubscriptions,
 		subscribe,
 		unsubscribe,
@@ -46,13 +46,12 @@ func InitContext () (context *Context, err error) {
 
 	handler := handler.CreateHandler(commands, stateRepository)
 
-	context = &Context {
+	context = &Context{
 		Handler: handler,
 	}
 
 	return
 }
-
 
 func getTelegramApiBaseUrl() string {
 	telegramApiBaseUrl := os.Getenv("TELEGRAM_API_BASE_URL")

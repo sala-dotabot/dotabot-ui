@@ -1,4 +1,4 @@
-FROM golang:1.10.4 as build
+FROM golang:1.16.4 as build
 WORKDIR /go/src/dotabot-ui
 
 COPY telegram telegram
@@ -6,6 +6,8 @@ COPY handler handler
 COPY vendor vendor
 COPY state state
 COPY *.go ./
+COPY go.mod ./
+COPY go.sum ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a --installsuffix cgo -o dotabot-ui .
 

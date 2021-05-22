@@ -1,31 +1,32 @@
-package handler 
+package handler
 
 import (
-	"dotabot-ui/state"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
-	local_telegram "dotabot-ui/telegram"
+	"github.com/saladinkzn/dotabot-ui/state"
+
+	local_telegram "github.com/saladinkzn/dotabot-ui/telegram"
 )
 
 const INIT_STATE = ""
 
 type Handler struct {
 	stateRepository state.StateRepository
-	commands []Command
+	commands        []Command
 }
 
 func CreateHandler(commands []Command, stateRepository state.StateRepository) *Handler {
 	return &Handler{
 		stateRepository: stateRepository,
-		commands: commands,
+		commands:        commands,
 	}
 }
 
 func (this Handler) Handle(w http.ResponseWriter, r *http.Request) {
-    if (r.URL == nil || r.URL.Path != "/webhook") {
+	if r.URL == nil || r.URL.Path != "/webhook" {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
@@ -47,7 +48,7 @@ func (this Handler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Loading state")
 	state, err := this.stateRepository.LoadState(u.Message.Chat.Id)
-	if (err != nil) {
+	if err != nil {
 		log.Printf("Error has occurred while loading state: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -67,7 +68,7 @@ func (this Handler) Handle(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Handler was not found")
 	}
 
-	if (err != nil) {
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

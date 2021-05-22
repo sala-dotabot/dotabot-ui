@@ -4,7 +4,7 @@ import (
 	"log"
 	"regexp"
 
-	local_telegram "dotabot-ui/telegram"
+	local_telegram "github.com/saladinkzn/dotabot-ui/telegram"
 
 	"github.com/saladinkzn/dotabot-cron/repository"
 	"github.com/saladinkzn/dotabot-cron/telegram"
@@ -13,21 +13,21 @@ import (
 type ListSubscriptions struct {
 	subscriptionsRe *regexp.Regexp
 
-	repository repository.SubscriptionRepository
+	repository  repository.SubscriptionRepository
 	telegramApi telegram.TelegramApi
 }
 
-func CreateListSubscriptions(repository repository.SubscriptionRepository, 
-								telegramApi telegram.TelegramApi) *ListSubscriptions {
-	return &ListSubscriptions {
+func CreateListSubscriptions(repository repository.SubscriptionRepository,
+	telegramApi telegram.TelegramApi) *ListSubscriptions {
+	return &ListSubscriptions{
 		subscriptionsRe: regexp.MustCompile("^/?subscriptions(@.*)?"),
-		repository: repository,
-		telegramApi: telegramApi,
+		repository:      repository,
+		telegramApi:     telegramApi,
 	}
 }
 
 func (this *ListSubscriptions) CanHandle(update local_telegram.Update, state string) bool {
-	if (state != INIT_STATE) {
+	if state != INIT_STATE {
 		return false
 	}
 
@@ -56,7 +56,7 @@ func (this *ListSubscriptions) Handle(update local_telegram.Update, state string
 		}
 		str += element.DotaAccountId
 	}
-	
+
 	err = this.telegramApi.SendMessage(chat_id, str)
 	return err
 }

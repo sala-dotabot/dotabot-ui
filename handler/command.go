@@ -1,7 +1,7 @@
 package handler
 
 import (
-	local_telegram "dotabot-ui/telegram"
+	local_telegram "github.com/saladinkzn/dotabot-ui/telegram"
 )
 
 type Command interface {

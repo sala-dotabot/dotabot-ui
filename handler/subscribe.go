@@ -4,9 +4,9 @@ import (
 	"errors"
 	"regexp"
 
-	"dotabot-ui/state"
+	"github.com/saladinkzn/dotabot-ui/state"
 
-	local_telegram "dotabot-ui/telegram"
+	local_telegram "github.com/saladinkzn/dotabot-ui/telegram"
 
 	"github.com/saladinkzn/dotabot-cron/repository"
 	"github.com/saladinkzn/dotabot-cron/telegram"
@@ -20,25 +20,25 @@ type Subscribe struct {
 	subscribeRe *regexp.Regexp
 	accountIdRe *regexp.Regexp
 
-	repository repository.SubscriptionRepository
-	telegramApi telegram.TelegramApi
+	repository      repository.SubscriptionRepository
+	telegramApi     telegram.TelegramApi
 	stateRepository state.StateRepository
 }
 
 func CreateSubscribe(repository repository.SubscriptionRepository,
-						telegramApi telegram.TelegramApi,
-						stateRepository state.StateRepository) *Subscribe {
+	telegramApi telegram.TelegramApi,
+	stateRepository state.StateRepository) *Subscribe {
 	return &Subscribe{
-		subscribeRe: regexp.MustCompile("^/?subscribe(@.*)?"),
-		accountIdRe: regexp.MustCompile("\\d+"),
-		repository: repository,
-		telegramApi: telegramApi,
+		subscribeRe:     regexp.MustCompile("^/?subscribe(@.*)?"),
+		accountIdRe:     regexp.MustCompile("\\d+"),
+		repository:      repository,
+		telegramApi:     telegramApi,
 		stateRepository: stateRepository,
 	}
 }
 
 func (this *Subscribe) CanHandle(update local_telegram.Update, state string) bool {
-	switch(state) {
+	switch state {
 	case INIT_STATE:
 		return this.subscribeRe.MatchString(update.Message.Text)
 	case ASK_FOR_ACCOUNT_ID:
@@ -52,7 +52,7 @@ func (this *Subscribe) Handle(update local_telegram.Update, state string) error 
 	chat_id := update.Message.Chat.Id
 	message := update.Message.Text
 
-	switch(state) {
+	switch state {
 	case INIT_STATE:
 		err := this.telegramApi.SendMessage(chat_id, "Enter account id")
 		if err != nil {
@@ -74,9 +74,9 @@ func (this *Subscribe) Handle(update local_telegram.Update, state string) error 
 			return errors.New("accountId was not found")
 		}
 		dotaAccountId := matches[0]
-		
-		subscription := repository.TelegramMatchSubscription {
-			ChatId: chat_id,
+
+		subscription := repository.TelegramMatchSubscription{
+			ChatId:        chat_id,
 			DotaAccountId: dotaAccountId,
 		}
 		err := this.repository.SaveLastKnownMatchId(subscription, 0)
