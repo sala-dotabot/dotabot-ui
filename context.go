@@ -20,6 +20,8 @@ type Context struct {
 	MetricsHandler http.Handler
 }
 
+const metricsNamespace = "dotabot_ui"
+
 func InitContext() (context *Context, err error) {
 	telegramApiBaseUrl := getTelegramApiBaseUrl()
 	telegramApiToken := getTelegramApiToken()
@@ -37,7 +39,7 @@ func InitContext() (context *Context, err error) {
 	})
 
 	repository := repository.CreateRedisRepository(client)
-	stateRepository := state.CreateMapRepository()
+	stateRepository := state.CreateRedisStateRepostory(client)
 
 	listSubscriptions := handler.CreateListSubscriptions(repository, telegramApi)
 	subscribe := handler.CreateSubscribe(repository, telegramApi, stateRepository)
@@ -49,32 +51,46 @@ func InitContext() (context *Context, err error) {
 		unsubscribe,
 	}
 
+	metricsRegistry := prometheus.NewRegistry()
+
 	totalCount := prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "total_update_count",
+		Namespace: metricsNamespace,
+		Name:      "total_update_count",
 	})
+	metricsRegistry.MustRegister(totalCount)
 
 	notFoundErrorCounter := prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "not_found_error_count",
+		Namespace: metricsNamespace,
+		Name:      "not_found_error_count",
 	})
+	metricsRegistry.MustRegister(notFoundErrorCounter)
 
 	decodeErrorCounter := prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "decode_error_count",
+		Namespace: metricsNamespace,
+		Name:      "decode_error_count",
 	})
+	metricsRegistry.MustRegister(decodeErrorCounter)
 
 	loadStateErrorCounter := prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "load_state_error_count",
+		Namespace: metricsNamespace,
+		Name:      "load_state_error_count",
 	})
+	metricsRegistry.MustRegister(loadStateErrorCounter)
 
 	unhandledCounter := prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "unhandled_count",
+		Namespace: metricsNamespace,
+		Name:      "unhandled_count",
 	})
+	metricsRegistry.MustRegister(unhandledCounter)
 
 	errorCounter := prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "error_count",
+		Namespace: metricsNamespace,
+		Name:      "error_count",
 	})
+	metricsRegistry.MustRegister(errorCounter)
 
 	handler := handler.CreateHandler(commands, stateRepository, totalCount, notFoundErrorCounter, decodeErrorCounter, loadStateErrorCounter, unhandledCounter, errorCounter)
-	metricsHandler := promhttp.Handler()
+	metricsHandler := promhttp.HandlerFor(metricsRegistry, promhttp.HandlerOpts{})
 
 	context = &Context{
 		Handler:        handler,
