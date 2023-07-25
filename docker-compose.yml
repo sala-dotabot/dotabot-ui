@@ -11,8 +11,9 @@ services:
       - dotabot-ui
     ports:
       - 8080:8080
+      - 8090:8090
   redis:
-    image: redis:3.2.5
+    image: redis:6.0.19
     command: redis-server --appendonly yes
     networks:
       - dotabot-ui

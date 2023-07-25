@@ -1,4 +1,4 @@
-FROM golang:1.16.4 as build
+FROM golang:1.18.10 as build
 WORKDIR /go/src/dotabot-ui
 
 COPY telegram telegram
@@ -15,6 +15,7 @@ FROM alpine:3.8
 WORKDIR /root
 
 EXPOSE 8080
+EXPOSE 8090
 
 RUN apk --update --no-cache add ca-certificates
 
