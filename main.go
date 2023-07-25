@@ -12,5 +12,10 @@ func main() {
 	}
 
 	http.HandleFunc("/", context.Handler.Handle)
+
+	go func() {
+		log.Fatal(http.ListenAndServe(":8090", context.MetricsHandler))
+	}()
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/saladinkzn/dotabot-ui/state"
 
 	local_telegram "github.com/saladinkzn/dotabot-ui/telegram"
@@ -16,12 +17,14 @@ const INIT_STATE = ""
 type Handler struct {
 	stateRepository state.StateRepository
 	commands        []Command
+	totalCounter    prometheus.Counter
 }
 
-func CreateHandler(commands []Command, stateRepository state.StateRepository) *Handler {
+func CreateHandler(commands []Command, stateRepository state.StateRepository, totalCounter prometheus.Counter) *Handler {
 	return &Handler{
 		stateRepository: stateRepository,
 		commands:        commands,
+		totalCounter:    totalCounter,
 	}
 }
 
@@ -40,6 +43,7 @@ func (this Handler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("%#v", u)
 	log.Printf("%#v", u.Message)
+	this.totalCounter.Inc()
 
 	if u.Message == nil {
 		fmt.Fprint(w, "OK")

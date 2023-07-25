@@ -4,15 +4,19 @@ import (
 	"github.com/saladinkzn/dotabot-ui/handler"
 	"github.com/saladinkzn/dotabot-ui/state"
 
+	"net/http"
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/saladinkzn/dotabot-cron/repository"
 	"github.com/saladinkzn/dotabot-cron/telegram"
 )
 
 type Context struct {
 	Handler *handler.Handler
+
+	MetricsHandler http.Handler
 }
 
 func InitContext() (context *Context, err error) {
@@ -32,7 +36,7 @@ func InitContext() (context *Context, err error) {
 	})
 
 	repository := repository.CreateRedisRepository(client)
-	stateRepository := state.CreateMapRepository()
+	stateRepository := state.CreateRedisStateRepostory(client)
 
 	listSubscriptions := handler.CreateListSubscriptions(repository, telegramApi)
 	subscribe := handler.CreateSubscribe(repository, telegramApi, stateRepository)
@@ -45,9 +49,11 @@ func InitContext() (context *Context, err error) {
 	}
 
 	handler := handler.CreateHandler(commands, stateRepository)
+	metricsHandler := promhttp.Handler()
 
 	context = &Context{
-		Handler: handler,
+		Handler:        handler,
+		MetricsHandler: metricsHandler,
 	}
 
 	return

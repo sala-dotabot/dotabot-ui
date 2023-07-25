@@ -1,0 +1,48 @@
+### POST /subscriptions
+POST http://localhost:8080/webhook
+Content-Type: application/json
+
+{
+    "update_id": 123, 
+    "message": {
+        "message_id": 234,
+        "chat": {
+            "id": 345
+        },
+        "text": "/subscriptions"
+    }
+}
+
+### POST /subscribe 228
+POST http://localhost:8080/webhook
+Content-Type: application/json
+
+{
+    "update_id": 123,
+    "message": {
+        "message_id": 234,
+        "chat": {
+            "id": 345
+        },
+        "text": "/subscribe"
+    }
+}
+
+
+### POST 228
+POST http://localhost:8080/webhook
+Content-Type: application/json
+
+{
+    "update_id": 123,
+    "message": {
+        "message_id": 234,
+        "chat": {
+            "id": 345
+        },
+        "text": "228"
+    }
+}
+
+### Get metrics
+GET http://localhost:8090/metrics
