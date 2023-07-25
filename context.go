@@ -39,7 +39,7 @@ func InitContext() (context *Context, err error) {
 	})
 
 	repository := repository.CreateRedisRepository(client)
-	stateRepository := state.CreateRedisStateRepostory(client)
+	stateRepository := state.CreateMapRepository()
 
 	listSubscriptions := handler.CreateListSubscriptions(repository, telegramApi)
 	subscribe := handler.CreateSubscribe(repository, telegramApi, stateRepository)
