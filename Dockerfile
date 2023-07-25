@@ -1,4 +1,4 @@
-FROM golang:1.16.4 as build
+FROM golang:1.18.10 as build
 WORKDIR /go/src/dotabot-ui
 
 COPY telegram telegram

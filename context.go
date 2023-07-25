@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/saladinkzn/dotabot-cron/repository"
 	"github.com/saladinkzn/dotabot-cron/telegram"
@@ -36,7 +37,7 @@ func InitContext() (context *Context, err error) {
 	})
 
 	repository := repository.CreateRedisRepository(client)
-	stateRepository := state.CreateRedisStateRepostory(client)
+	stateRepository := state.CreateMapRepository()
 
 	listSubscriptions := handler.CreateListSubscriptions(repository, telegramApi)
 	subscribe := handler.CreateSubscribe(repository, telegramApi, stateRepository)
@@ -48,7 +49,31 @@ func InitContext() (context *Context, err error) {
 		unsubscribe,
 	}
 
-	handler := handler.CreateHandler(commands, stateRepository)
+	totalCount := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "total_update_count",
+	})
+
+	notFoundErrorCounter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "not_found_error_count",
+	})
+
+	decodeErrorCounter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "decode_error_count",
+	})
+
+	loadStateErrorCounter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "load_state_error_count",
+	})
+
+	unhandledCounter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "unhandled_count",
+	})
+
+	errorCounter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "error_count",
+	})
+
+	handler := handler.CreateHandler(commands, stateRepository, totalCount, notFoundErrorCounter, decodeErrorCounter, loadStateErrorCounter, unhandledCounter, errorCounter)
 	metricsHandler := promhttp.Handler()
 
 	context = &Context{

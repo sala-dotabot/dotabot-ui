@@ -44,5 +44,8 @@ Content-Type: application/json
     }
 }
 
+###GET 404
+GET http://localhost:8080/not_found
+
 ### Get metrics
 GET http://localhost:8090/metrics
